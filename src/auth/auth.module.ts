@@ -6,16 +6,21 @@ import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
+import { readFile } from 'node:fs/promises';
 
 
 const jwtFactory = {
-  useFactory: async (configService: ConfigService) => ({
-    secret: configService.get('JWT_SECRET'),
-    signOptions: {
-      expiresIn: configService.get('JWT_EXP_H'),
-    },
-  }),
-  inject: [ConfigService],
+  useFactory: async (configService: ConfigService) => { 
+		let privateKey = await readFile(__dirname + '/../config/private.ec.key');
+
+		return ({
+			secret: configService.get('JWT_SECRET'),
+			signOptions: {
+				expiresIn: configService.get('JWT_EXP_H'),
+			},
+		}); 
+	},
+	inject: [ConfigService],
 };
 
 @Module({

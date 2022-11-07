@@ -24,7 +24,7 @@ import { UsersService } from './users.service';
 @Controller('users')
 @UseGuards(AuthGuard())
 export class UsersController {
-  constructor(private userService: UsersService, private jwtService: JwtService, private configService: ConfigService) {}
+  constructor(private userService: UsersService) {}
 
   @Get()
   async getUsers(@Headers('Authorization') authorization = '', @Query() filterDto: UserDataDto): Promise<User[]> {
