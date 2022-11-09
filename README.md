@@ -6,4 +6,3 @@
 
 
 This repo is a fork of https://github.com/zzpzaf/nest-external-config-env used as study for asymetric validation in NestJs
-
