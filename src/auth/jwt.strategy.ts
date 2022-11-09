@@ -5,7 +5,6 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserJwtPayload } from 'src/dataObjects/user-jwt-payload.interface';
 import { User } from 'src/dataObjects/user.entity';
 import { DbRepo } from 'src/dataObjects/dbRepo';
-import { readFile } from 'node:fs/promises';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -13,18 +12,20 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 		private dbRepo: DbRepo,
 		private configService: ConfigService,
 	) {
-		let privateKey = await readFile(__dirname + '/../config/private.ec.key');
-
+		let publicKey = configService.get<string>('JWT_PUBLIC_KEY_BASE64', '');
+		console.log('jwts publicKey', publicKey);
+		//		let publicKey = configService.get<string>('JWT_SECRET', '');
 		super({
-			secretOrKey: configService.get('JWT_SECRET'),
+			secretOrKey: publicKey,
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+			ignoreExpiration: false,
+			algorithms: ['ES512']
 		});
 	}
 
 	async validate(payload: UserJwtPayload): Promise<User> {
 		console.log('payload', payload);
-		let publicKey = await readFile(__dirname + '/../config/public.pem');
-		
+
 		const { username, typeid } = payload;
 		const users: User[] = await this.dbRepo.getUsers({ username });
 		const user: User = users[0];
