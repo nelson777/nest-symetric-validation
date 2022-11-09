@@ -12,14 +12,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 		private dbRepo: DbRepo,
 		private configService: ConfigService,
 	) {
-		let publicKey = configService.get<string>('JWT_PUBLIC_KEY_BASE64', '');
-		console.log('jwts publicKey', publicKey);
-		//		let publicKey = configService.get<string>('JWT_SECRET', '');
+		let secret = configService.get<string>('JWT_SECRET', '');
 		super({
-			secretOrKey: publicKey,
+			secretOrKey: secret,
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-			ignoreExpiration: false,
-			algorithms: ['ES512']
 		});
 	}
 
